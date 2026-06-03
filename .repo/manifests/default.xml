@@ -3,13 +3,8 @@
   <!--
     HRCustom ROM - manifest principal
     Base: LineageOS 23.2 (Android 16)
-    Inclua este arquivo como local_manifest OU use um repo
-    de manifest dedicado: HeroRickyGAMES/android (branch hrcustom-16.0)
-
-    Uso recomendado:
-      repo init -u https://github.com/LineageOS/android.git -b lineage-23.2 --git-lfs
-      # copie este arquivo para .repo/local_manifests/hrcustom.xml
-      repo sync -c -j4 --force-sync --no-clone-bundle --no-tags
+    Use este arquivo como local_manifest em .repo/local_manifests/hrcustom.xml
+    Instrucoes completas de init/sync/build em SYNC.md e BUILD.md do repo.
   -->
 
   <!-- Remotes -->
