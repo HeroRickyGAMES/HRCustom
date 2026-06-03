@@ -25,9 +25,13 @@ PRODUCT_COPY_FILES += \
     vendor/hrcustom/prebuilt/keybox.xml:$(TARGET_COPY_OUT_VENDOR)/etc/keybox.xml
 endif
 
-# ---- IA local nativa ----
+# ---- IA local nativa (OPCIONAL) ----
+# Só entra no build se HRCUSTOM_WITH_AI := true (precisa do llama.cpp + ícone).
+# Mantém a ROM bootável por padrão sem depender da IA.
+ifeq ($(HRCUSTOM_WITH_AI),true)
 PRODUCT_PACKAGES += \
     HRAssistant
+endif
 
 # ---- Overlays de identidade ----
 PRODUCT_PACKAGE_OVERLAYS += vendor/hrcustom/overlay/common
