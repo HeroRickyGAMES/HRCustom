@@ -8,7 +8,7 @@
   -->
 
   <!-- Remotes -->
-  <remote name="github"   fetch="https://github.com/" />
+  <!-- O remote "github" ja e definido pela base do LineageOS; nao redefinir. -->
   <remote name="hrcustom" fetch="https://github.com/HeroRickyGAMES/" revision="main" />
 
   <!-- ============ Poco F5 (marble / sm8450-common) ============ -->
