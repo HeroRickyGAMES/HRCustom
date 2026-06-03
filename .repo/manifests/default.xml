@@ -1,60 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
   <!--
-    HRCustom ROM - manifest principal
+    HRCustom ROM - local manifest
     Base: LineageOS 23.2 (Android 16)
-    Use este arquivo como local_manifest em .repo/local_manifests/hrcustom.xml
-    Instrucoes completas de init/sync/build em SYNC.md e BUILD.md do repo.
+    Device trees marble (Poco F5): Chaitanyakm (branch 16.0)
+    Kernel/hardware Xiaomi: LineageOS (lineage-23.2)
+    Instrucoes de init/sync/build em SYNC.md e BUILD.md.
   -->
 
-  <!-- Remotes -->
-  <!-- O remote "github" ja e definido pela base do LineageOS; nao redefinir. -->
-  <remote name="hrcustom" fetch="https://github.com/HeroRickyGAMES/" revision="main" />
+  <!-- Remotes (nomes unicos pra nao conflitar com a base LineageOS) -->
+  <remote name="chaitanya" fetch="https://github.com/Chaitanyakm/"
+          revision="refs/heads/16.0" />
+  <remote name="los"       fetch="https://github.com/LineageOS/"
+          revision="refs/heads/lineage-23.2" />
 
-  <!-- ============ Poco F5 (marble / sm8450-common) ============ -->
+  <!-- ============ Poco F5 (marble / sm8450) ============ -->
+
+  <!-- Device trees + blobs proprietarios: Chaitanyakm (16.0) -->
   <project path="device/xiaomi/marble"
-           name="android_device_xiaomi_marble"
-           remote="hrcustom" revision="hrcustom-16" />
+           name="device_xiaomi_marble"          remote="chaitanya" />
   <project path="device/xiaomi/sm8450-common"
-           name="android_device_xiaomi_sm8450-common"
-           remote="hrcustom" revision="hrcustom-16" />
-  <project path="kernel/xiaomi/sm8450"
-           name="android_kernel_xiaomi_sm8450"
-           remote="hrcustom" revision="hrcustom-16" />
+           name="device_xiaomi_sm8450-common"   remote="chaitanya" />
   <project path="vendor/xiaomi/marble"
-           name="proprietary_vendor_xiaomi_marble"
-           remote="hrcustom" revision="hrcustom-16" />
+           name="vendor_xiaomi_marble"          remote="chaitanya" />
+  <project path="vendor/xiaomi/sm8450-common"
+           name="vendor_xiaomi_sm8450-common"   remote="chaitanya" />
 
-  <!-- ============ Poco F1 (beryllium / sdm845) ============ -->
-  <!-- Forks dos repos oficiais LineageOS para o beryllium -->
-  <project path="device/xiaomi/beryllium"
-           name="android_device_xiaomi_beryllium"
-           remote="hrcustom" revision="hrcustom-16" />
-  <project path="device/xiaomi/sdm845-common"
-           name="android_device_xiaomi_sdm845-common"
-           remote="hrcustom" revision="hrcustom-16" />
-  <project path="kernel/xiaomi/sdm845"
-           name="android_kernel_xiaomi_sdm845"
-           remote="hrcustom" revision="hrcustom-16" />
-  <project path="vendor/xiaomi/beryllium"
-           name="proprietary_vendor_xiaomi_beryllium"
-           remote="hrcustom" revision="hrcustom-16" />
-
-  <!-- ============ Hardware Xiaomi (COMUM aos dois devices) ============ -->
-  <!-- HALs/interfaces comuns da Xiaomi (DisplayFeature, PowerShare,
-       TouchFeature, etc.). Dependência obrigatória dos device trees Xiaomi.
-       Um único repo atende marble E beryllium. -->
+  <!-- Kernel + hardware Xiaomi: LineageOS (lineage-23.2) -->
+  <project path="kernel/xiaomi/sm8450"
+           name="android_kernel_xiaomi_sm8450"             remote="los" />
+  <project path="kernel/xiaomi/sm8450-devicetrees"
+           name="android_kernel_xiaomi_sm8450-devicetrees" remote="los" />
+  <project path="kernel/xiaomi/sm8450-modules"
+           name="android_kernel_xiaomi_sm8450-modules"     remote="los" />
   <project path="hardware/xiaomi"
-           name="android_hardware_xiaomi"
-           remote="hrcustom" revision="hrcustom-16" />
+           name="android_hardware_xiaomi"                  remote="los" />
 
-  <!-- ============ HRCustom (próprios) ============ -->
-  <project path="vendor/hrcustom"
-           name="vendor_hrcustom"
-           remote="hrcustom" revision="main" />
+  <!-- ============ Poco F1 (beryllium) ============ -->
+  <!-- TODO: adicionar apos verificar deps completas (kernel sdm845 so tem
+       lineage-22.2; blobs ficam no TheMuppets). Sera incluso numa proxima
+       atualizacao pra nao quebrar o sync do marble. -->
 
-  <!-- IA local nativa (placeholder - app/serviço de sistema) -->
-  <project path="packages/apps/HRAssistant"
-           name="packages_apps_HRAssistant"
-           remote="hrcustom" revision="main" />
 </manifest>
