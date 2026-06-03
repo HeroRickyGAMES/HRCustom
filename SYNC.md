@@ -16,11 +16,17 @@ source e gerar o `.zip`.
 
 ```bash
 sudo apt update && sudo apt install -y \
-  git-core gnupg flex bison build-essential zip curl zlib1g-dev \
-  libc6-dev-i386 x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev \
-  libxml2-utils xsltproc unzip fontconfig python3 python-is-python3 \
-  ccache rsync openjdk-21-jdk
+  git-core git-lfs gnupg flex bison build-essential zip curl zlib1g-dev \
+  libc6-dev-i386 libncurses-dev x11proto-core-dev libx11-dev lib32z1-dev \
+  libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig python3 \
+  python-is-python3 ccache rsync openjdk-21-jdk
+
+# Habilita o git LFS (necessário pro --git-lfs do repo init)
+git lfs install
 ```
+
+> Nota: o Ubuntu 22.04+ removeu `libncurses5`/`lib32ncurses5-dev`.
+> Use `libncurses-dev` (já incluso acima).
 
 ## 2. Instalar o `repo`
 
