@@ -1,0 +1,11 @@
+# Segredos - NUNCA commitar
+prebuilt/keybox.xml
+
+# Bootanimation pode ser grande; descomente se quiser hospedar fora do git
+# bootanimation/bootanimation.zip
+# bootanimation/part*/
+
+# Lixo de build
+*.o
+*.out
+.DS_Store

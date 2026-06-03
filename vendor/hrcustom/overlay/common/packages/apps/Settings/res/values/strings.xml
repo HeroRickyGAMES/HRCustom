@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    HRCustom - Overlay de branding (Settings)
+    Troca as referências "LineageOS" pela "HRCustom" na tela
+    Configurações > Sobre o telefone.
+-->
+<resources>
+
+    <!-- Título "Versão da HRCustom" em Sobre o telefone -->
+    <string name="lineage_version">Versão da HRCustom</string>
+
+    <!-- Rodapé / firmware -->
+    <string name="firmware_version">Versão do HRCustom</string>
+
+    <!-- Nome do sistema operacional exibido -->
+    <string name="about_settings_summary">Informações sobre o HRCustom</string>
+
+</resources>

@@ -1,0 +1,83 @@
+name: Sync forks com upstream LineageOS
+
+# Mantém os forks da HRCustom atualizados com o source original do LineageOS.
+# Roda automaticamente de tempos em tempos e também sob demanda.
+
+on:
+  schedule:
+    # A cada 12h (00:00 e 12:00 UTC). Ajuste o cron como quiser.
+    - cron: '0 */12 * * *'
+  workflow_dispatch:   # botão "Run workflow" manual no GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false   # se um fork conflitar, os outros continuam
+      matrix:
+        include:
+          # fork (seu)                              | upstream (LineageOS)                     | branch upstream | sua branch
+          - { repo: "HeroRickyGAMES/android_device_xiaomi_marble",        upstream: "https://github.com/LineageOS/android_device_xiaomi_marble.git",        up_branch: "lineage-23.2", branch: "hrcustom-16" }
+          - { repo: "HeroRickyGAMES/android_device_xiaomi_sm8450-common",  upstream: "https://github.com/LineageOS/android_device_xiaomi_sm8450-common.git",  up_branch: "lineage-23.2", branch: "hrcustom-16" }
+          - { repo: "HeroRickyGAMES/android_kernel_xiaomi_sm8450",         upstream: "https://github.com/LineageOS/android_kernel_xiaomi_sm8450.git",         up_branch: "lineage-23.2", branch: "hrcustom-16" }
+          - { repo: "HeroRickyGAMES/android_device_xiaomi_beryllium",      upstream: "https://github.com/LineageOS/android_device_xiaomi_beryllium.git",      up_branch: "lineage-23.2", branch: "hrcustom-16" }
+
+    steps:
+      - name: Clonar o fork
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repo }}
+          ref: ${{ matrix.branch }}
+          token: ${{ secrets.HRCUSTOM_PAT }}   # PAT com escopo 'repo' (ver README)
+          fetch-depth: 0
+
+      - name: Configurar git
+        run: |
+          git config user.name  "HRCustom Bot"
+          git config user.email "bot@hrcustom.local"
+
+      - name: Merge do upstream LineageOS
+        id: merge
+        run: |
+          git remote add upstream "${{ matrix.upstream }}"
+          git fetch upstream "${{ matrix.up_branch }}"
+
+          # Quantos commits novos o upstream tem?
+          AHEAD=$(git rev-list --count HEAD..upstream/${{ matrix.up_branch }})
+          echo "Commits novos no upstream: $AHEAD"
+
+          if [ "$AHEAD" -eq 0 ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Já está atualizado. Nada a fazer."
+            exit 0
+          fi
+
+          # Tenta merge automático. Se conflitar, aborta e sinaliza.
+          if git merge --no-edit upstream/${{ matrix.up_branch }}; then
+            echo "changed=true"   >> "$GITHUB_OUTPUT"
+            echo "conflict=false" >> "$GITHUB_OUTPUT"
+          else
+            git merge --abort
+            echo "changed=false"  >> "$GITHUB_OUTPUT"
+            echo "conflict=true"  >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push das atualizações
+        if: steps.merge.outputs.changed == 'true'
+        run: git push origin ${{ matrix.branch }}
+
+      - name: Avisar sobre conflito (abre issue)
+        if: steps.merge.outputs.conflict == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.HRCUSTOM_PAT }}
+          script: |
+            const [owner, repo] = "${{ matrix.repo }}".split("/");
+            await github.rest.issues.create({
+              owner, repo,
+              title: "⚠️ Conflito ao sincronizar com upstream (${{ matrix.up_branch }})",
+              body: "O auto-sync encontrou conflitos ao mergear `upstream/${{ matrix.up_branch }}` em `${{ matrix.branch }}`.\n\nResolva manualmente:\n```bash\ngit fetch upstream ${{ matrix.up_branch }}\ngit merge upstream/${{ matrix.up_branch }}\n# resolva os conflitos\ngit push\n```"
+            });

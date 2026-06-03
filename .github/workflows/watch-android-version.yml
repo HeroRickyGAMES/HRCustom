@@ -1,0 +1,73 @@
+name: Vigiar novas versões do Android (LineageOS)
+
+# Detecta quando o LineageOS lança a branch de uma nova versão do Android
+# (ex.: lineage-24 quando sair o Android 17) e abre uma issue avisando
+# pra você iniciar a migração da HRCustom.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 1x por dia, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Listar branches do LineageOS/android
+        id: check
+        run: |
+          # Pega todas as branches lineage-XX(.Y) do repo de manifest oficial
+          git ls-remote --heads https://github.com/LineageOS/android.git 'refs/heads/lineage-*' \
+            | sed 's#.*refs/heads/##' | sort -V > branches.txt
+          echo "Branches encontradas:"
+          cat branches.txt
+
+          # Maior major version disponível (23, 24, ...)
+          LATEST=$(grep -oP 'lineage-\K[0-9]+' branches.txt | sort -n | tail -1)
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+
+          # Base atual da HRCustom (Android 16 = lineage-23)
+          CURRENT=23
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+          if [ "$LATEST" -gt "$CURRENT" ]; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Abrir issue se houver versão nova
+        if: steps.check.outputs.new == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const latest  = "${{ steps.check.outputs.latest }}";
+            const current = "${{ steps.check.outputs.current }}";
+            const title = `🚀 Nova versão do LineageOS disponível: lineage-${latest}`;
+
+            // Evita duplicar a issue
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: "open", labels: "upstream-version"
+            });
+            if (existing.data.some(i => i.title === title)) {
+              console.log("Issue já existe.");
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title,
+              labels: ["upstream-version"],
+              body: `O LineageOS publicou a branch **lineage-${latest}** (a HRCustom está em lineage-${current}).\n\n` +
+                    `### Passos para migrar\n` +
+                    `1. Atualizar o \`repo init -b lineage-${latest}\`\n` +
+                    `2. Mudar \`up_branch\` no \`.github/workflows/sync-upstream.yml\`\n` +
+                    `3. Atualizar as \`revision\` no \`.repo/manifests/default.xml\`\n` +
+                    `4. Rebasear os forks (device/kernel/vendor) na nova branch\n` +
+                    `5. Ajustar o \`branding.mk\` (versão do Android no fingerprint)\n`
+            });

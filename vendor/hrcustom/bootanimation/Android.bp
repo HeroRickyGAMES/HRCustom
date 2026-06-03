@@ -1,0 +1,27 @@
+// HRCustom - Bootanimation customizado
+//
+// Coloque seu arquivo pronto em:
+//   vendor/hrcustom/bootanimation/bootanimation.zip
+//
+// IMPORTANTE: o bootanimation.zip NÃO é um vídeo. É um zip (sem compressão,
+// "store") contendo:
+//   - desc.txt          -> define resolução, fps e os loops
+//   - part0/ part1/ ... -> pastas com frames PNG sequenciais
+//
+// Para converter seu vídeo em frames:
+//   ffmpeg -i boot.mp4 -r 30 part0/%04d.png
+//   # desc.txt exemplo (1080x2400 @ 30fps):
+//   #   1080 2400 30
+//   #   p 1 0 part0
+//   zip -r -0 bootanimation.zip desc.txt part0
+//
+// Este módulo instala o zip em /system/media/bootanimation.zip,
+// substituindo o do LineageOS.
+
+prebuilt_etc {
+    name: "bootanimation_hrcustom",
+    src: "bootanimation.zip",
+    filename: "bootanimation.zip",
+    relative_install_path: "../media",
+    // Resultado final: /system/media/bootanimation.zip
+}

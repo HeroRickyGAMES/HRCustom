@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    HRAssistant - manifest
+    Registra o app como serviço de assistente de voz/texto do sistema
+    e roda a inferência local num foreground service.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hrcustom.assistant"
+    android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- FGS só enquanto o usuário está usando (download/geração longa). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher">
+
+        <!-- Tela principal do assistente -->
+        <activity
+            android:name=".ui.AssistantActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.DeviceDefault.DayNight">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Permite ser invocado como assistente do sistema -->
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Serviço de inferência: iniciado SOB DEMANDA pela Activity,
+             nunca no boot. Encerra quando o usuário sai do assistente. -->
+        <service
+            android:name=".engine.InferenceService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="local_ai_inference" />
+        </service>
+
+    </application>
+</manifest>

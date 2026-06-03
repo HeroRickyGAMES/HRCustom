@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HRAssistant</string>
+    <string name="welcome">Olá! Sou a IA local da HRCustom. Tudo roda no seu aparelho, sem nuvem.</string>
+    <string name="input_hint">Pergunte alguma coisa…</string>
+    <string name="send">Enviar</string>
+</resources>

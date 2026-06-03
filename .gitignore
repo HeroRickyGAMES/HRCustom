@@ -1,0 +1,15 @@
+# Build output
+/out/
+*.zip
+*.img
+
+# Modelos de IA (baixados on-demand, não versionar)
+*.gguf
+
+# Lixo
+.DS_Store
+*.log
+*.o
+
+# Segredos
+**/keybox.xml

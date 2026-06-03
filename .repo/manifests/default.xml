@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!--
+    HRCustom ROM - manifest principal
+    Base: LineageOS 23.2 (Android 16)
+    Inclua este arquivo como local_manifest OU use um repo
+    de manifest dedicado: HeroRickyGAMES/android (branch hrcustom-16.0)
+
+    Uso recomendado:
+      repo init -u https://github.com/LineageOS/android.git -b lineage-23.2 --git-lfs
+      # copie este arquivo para .repo/local_manifests/hrcustom.xml
+      repo sync -c -j4 --force-sync --no-clone-bundle --no-tags
+  -->
+
+  <!-- Remotes -->
+  <remote name="github"   fetch="https://github.com/" />
+  <remote name="hrcustom" fetch="https://github.com/HeroRickyGAMES/" revision="main" />
+
+  <!-- ============ Poco F5 (marble / sm8450-common) ============ -->
+  <project path="device/xiaomi/marble"
+           name="android_device_xiaomi_marble"
+           remote="hrcustom" revision="hrcustom-16" />
+  <project path="device/xiaomi/sm8450-common"
+           name="android_device_xiaomi_sm8450-common"
+           remote="hrcustom" revision="hrcustom-16" />
+  <project path="kernel/xiaomi/sm8450"
+           name="android_kernel_xiaomi_sm8450"
+           remote="hrcustom" revision="hrcustom-16" />
+  <project path="vendor/xiaomi/marble"
+           name="proprietary_vendor_xiaomi_marble"
+           remote="hrcustom" revision="hrcustom-16" />
+
+  <!-- ============ Poco F1 (beryllium / sdm845) ============ -->
+  <!-- Forks dos repos oficiais LineageOS para o beryllium -->
+  <project path="device/xiaomi/beryllium"
+           name="android_device_xiaomi_beryllium"
+           remote="hrcustom" revision="hrcustom-16" />
+  <project path="device/xiaomi/sdm845-common"
+           name="android_device_xiaomi_sdm845-common"
+           remote="hrcustom" revision="hrcustom-16" />
+  <project path="kernel/xiaomi/sdm845"
+           name="android_kernel_xiaomi_sdm845"
+           remote="hrcustom" revision="hrcustom-16" />
+  <project path="vendor/xiaomi/beryllium"
+           name="proprietary_vendor_xiaomi_beryllium"
+           remote="hrcustom" revision="hrcustom-16" />
+
+  <!-- ============ Hardware Xiaomi (COMUM aos dois devices) ============ -->
+  <!-- HALs/interfaces comuns da Xiaomi (DisplayFeature, PowerShare,
+       TouchFeature, etc.). Dependência obrigatória dos device trees Xiaomi.
+       Um único repo atende marble E beryllium. -->
+  <project path="hardware/xiaomi"
+           name="android_hardware_xiaomi"
+           remote="hrcustom" revision="hrcustom-16" />
+
+  <!-- ============ HRCustom (próprios) ============ -->
+  <project path="vendor/hrcustom"
+           name="vendor_hrcustom"
+           remote="hrcustom" revision="main" />
+
+  <!-- IA local nativa (placeholder - app/serviço de sistema) -->
+  <project path="packages/apps/HRAssistant"
+           name="packages_apps_HRAssistant"
+           remote="hrcustom" revision="main" />
+</manifest>

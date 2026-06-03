@@ -1,0 +1,49 @@
+// HRAssistant - IA local nativa da HRCustom (Qwen2.5 via llama.cpp)
+//
+// App de sistema privilegiado + lib nativa JNI que roda o modelo localmente.
+
+android_app {
+    name: "HRAssistant",
+
+    srcs: ["src/**/*.java"],
+    resource_dirs: ["res"],
+    manifest: "AndroidManifest.xml",
+
+    platform_apis: true,
+    certificate: "platform",
+    privileged: true,
+
+    // Empacota a lib nativa JNI dentro do APK.
+    jni_libs: ["libhrassistant_llama"],
+    use_embedded_native_libs: true,
+
+    optimize: {
+        enabled: false,   // build leve: pula proguard no dev
+    },
+}
+
+// Ponte JNI (llama_jni.cpp) linkada contra o llama.cpp.
+cc_library_shared {
+    name: "libhrassistant_llama",
+    srcs: ["jni/llama_jni.cpp"],
+
+    shared_libs: [
+        "liblog",
+        "libllama",     // llama.cpp como módulo Soong (ver nota abaixo)
+    ],
+
+    cflags: [
+        "-std=c++17",
+        "-Wall",
+    ],
+
+    // O modelo NÃO é embutido (build leve). É baixado on-demand para
+    // /data/.../files/qwen2.5-1.5b-instruct-q4_k_m.gguf na 1ª execução.
+}
+
+// NOTA sobre o libllama:
+//   O llama.cpp precisa entrar na árvore como módulo Soong. Opções:
+//   1. Adicionar github.com/ggerganov/llama.cpp em external/llama.cpp no
+//      manifest e criar um Android.bp para compilar libllama.
+//   2. Ou usar um prebuilt .so por ABI (arm64-v8a) via cc_prebuilt_library_shared.
+//   Veja jni/README.md.
